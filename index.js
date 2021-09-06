@@ -6,6 +6,9 @@
 // @author       Kiva
 // @match        *://*.bilibili.com/*
 // @icon         https://www.google.com/s2/favicons?domain=bilibili.com
+// @updateURL    https://github.com/kly402023688/bilibili-script/blob/master/index.js
+// @downloadURL  https://github.com/kly402023688/bilibili-script/blob/master/index.js
+// @homepage     https://github.com/kly402023688/bilibili-script
 // @grant        none
 // ==/UserScript==
 (function() {
