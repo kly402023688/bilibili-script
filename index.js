@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kiva自用b站视频脚本
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  自用
 // @author       Kiva
 // @match        *://*.bilibili.com/*
@@ -99,15 +99,17 @@
 
   // 宽屏模式
   const initWidescreen = function () {
-    const timer = setInterval(() => {
+    setTimeout(() => {
       const is = judgeControlWrapLoaded()
-      if (is == null) return
+      if (is == null) return initWidescreen();
       const clazz = is ? '.squirtle-widescreen-inactive' : '.bilibili-player-video-btn-widescreen'
       const dom = document.querySelector(clazz)
-      if (!dom) return
+      if (!dom) return initWidescreen();
       dom.click()
-      clearInterval(timer)
-    }, INTERVAL_TIME)
+      setTimeout(() => {
+        if (!document.getElementById('bilibiliPlayer').classList.contains('mode-widescreen')) initWidescreen();
+      }, INTERVAL_TIME);
+    }, INTERVAL_TIME);
   }
 
   // 截图
@@ -137,8 +139,13 @@
     }, INTERVAL_TIME)
   }
 
-  // 执行
-  initWidescreen()
-  initSnapshot()
-  initFrame()
+ initWidescreen();
+ const pushState = window.history.pushState;
+ // 监听路由变化进入宽屏模式
+ window.history.pushState = function() {
+     pushState.apply(this, arguments);
+     initWidescreen();
+ }
+ // initSnapshot()
+ // initFrame()
 })();
