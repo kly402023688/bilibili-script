@@ -84,7 +84,7 @@
   const judgeControlWrapLoaded = () => {
     const video = document.querySelector('bwp-video') || document.querySelector('video')
     if (!video || video.readyState !== 4) return null
-    const controlWrap = document.querySelector(".squirtle-controller-wrap")
+    const controlWrap = document.querySelector(".squirtle-controller-wrap");
     return !!controlWrap
   }
 
@@ -107,7 +107,10 @@
       if (!dom) return initWidescreen();
       dom.click()
       setTimeout(() => {
-        if (!document.getElementById('bilibiliPlayer').classList.contains('mode-widescreen')) initWidescreen();
+        const anime = document.getElementById('bilibiliPlayer');
+        const movie = document.getElementById('bilibili-player') && document.getElementById('bilibili-player').querySelector('.bpx-player-container');
+        if (anime && !anime.classList.contains('mode-widescreen')) return initWidescreen();
+        if (movie && movie.dataset.screen === 'normal') return initWidescreen();
       }, INTERVAL_TIME);
     }, INTERVAL_TIME);
   }
@@ -144,8 +147,11 @@
  // 监听路由变化进入宽屏模式
  window.history.pushState = function() {
      pushState.apply(this, arguments);
-     initWidescreen();
+     setTimeout(() => { initWidescreen(); }, 100);
  }
+ window.addEventListener('hashchange', () => {
+     setTimeout(() => { initWidescreen(); }, 100);
+ });
  // initSnapshot()
  // initFrame()
 })();
