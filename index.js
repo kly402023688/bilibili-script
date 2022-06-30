@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kiva自用b站视频脚本
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.1.2
 // @description  自用
 // @author       Kiva
 // @match        *://*.bilibili.com/*
@@ -105,6 +105,10 @@
       const clazz = is ? '.squirtle-widescreen-inactive' : '.bilibili-player-video-btn-widescreen'
       const dom = document.querySelector(clazz)
       if (!dom) return initWidescreen();
+      const anime = document.getElementById('bilibiliPlayer');
+      const movie = document.getElementById('bilibili-player') && document.getElementById('bilibili-player').querySelector('.bpx-player-container');
+      if (anime && anime.classList.contains('mode-widescreen')) return;
+      if (movie && movie.dataset.screen !== 'normal') return;
       dom.click()
       setTimeout(() => {
         const anime = document.getElementById('bilibiliPlayer');
