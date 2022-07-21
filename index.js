@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kiva自用b站视频脚本
 // @namespace    http://tampermonkey.net/
-// @version      1.1.2
+// @version      1.1.3
 // @description  自用
 // @author       Kiva
 // @match        *://*.bilibili.com/*
@@ -11,7 +11,7 @@
 // @homepage     https://github.com/kly402023688/bilibili-script
 // @grant        none
 // ==/UserScript==
-(function() {
+(function(document) {
   'use strict';
   // 点击一次跳的帧数
   const JUMP_FRAME = 0.016 * 5
@@ -82,7 +82,9 @@
 
   // 判断视频类型
   const judgeControlWrapLoaded = () => {
-    const video = document.querySelector('bwp-video') || document.querySelector('video')
+    const bv = document.querySelector('bwp-video');
+    const v = document.querySelector('video');
+    const video = (bv && bv.parentElement.parentElement !== document.body) ? bv : (v && v.parentElement.parentElement !== document.body) ? v : null;
     if (!video || video.readyState !== 4) return null
     const controlWrap = document.querySelector(".squirtle-controller-wrap");
     return !!controlWrap
@@ -108,14 +110,9 @@
       const anime = document.getElementById('bilibiliPlayer');
       const movie = document.getElementById('bilibili-player') && document.getElementById('bilibili-player').querySelector('.bpx-player-container');
       if (anime && anime.classList.contains('mode-widescreen')) return;
-      if (movie && movie.dataset.screen !== 'normal') return;
+      if (!anime && movie && movie.dataset.screen !== 'normal') return;
       dom.click()
-      setTimeout(() => {
-        const anime = document.getElementById('bilibiliPlayer');
-        const movie = document.getElementById('bilibili-player') && document.getElementById('bilibili-player').querySelector('.bpx-player-container');
-        if (anime && !anime.classList.contains('mode-widescreen')) return initWidescreen();
-        if (movie && movie.dataset.screen === 'normal') return initWidescreen();
-      }, INTERVAL_TIME);
+      initWidescreen();
     }, INTERVAL_TIME);
   }
 
@@ -151,11 +148,11 @@
  // 监听路由变化进入宽屏模式
  window.history.pushState = function() {
      pushState.apply(this, arguments);
-     setTimeout(() => { initWidescreen(); }, 100);
+     initWidescreen();
  }
  window.addEventListener('hashchange', () => {
-     setTimeout(() => { initWidescreen(); }, 100);
+     initWidescreen();
  });
  // initSnapshot()
  // initFrame()
-})();
+})(window.top.document);
